@@ -13,8 +13,9 @@ var qrcode; // the current qrcode of an event
 var fileEntry; // file entry used for storage with phonegap
 
 // function gets called, when DOM is ready 
-$(document).ready(function() {  
-	//click listeners
+$(document).ready(function() {
+  	
+  //click listeners
 	$('#login_button').click(function(event){
 		if($('#username').val() != "undefined"  && $('#username').val() != null && $('#password').val() != "undefined" && $('#password').val() != null && $('#username').val().length >0 && $('#password').val().length>0){
 			login($('#username').val(),$('#password').val(), false);
