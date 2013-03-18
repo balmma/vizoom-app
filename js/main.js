@@ -308,7 +308,7 @@ function display_location_detail(location_href) {
 			$('#location_detail_address').html('<b>Address: </b><br/><div style="margin-left:10px">' + res.street + '<br/>' + res.zip + " " + res.city + '<br/>' + res.country + '</div>');
 			$('#location_detail_description').html('<br/><b>Description:</b>' + res.description);
 			for(i = 0; i < res.images.length; i++){
-				images += '<img src=\"' + ROOT + res.images[i].popup.src + '\" width=\"'+(screen.width-30)+'px;\"/><br/>';
+				images += '<img src=\"' + ROOT + res.images[i].normal.src + '\" width=\"'+(screen.width - 30)\"/><br/>';
 			}
 			$('#location_detail_images').html('<b>Images:</b> <br/>' + images);
 
