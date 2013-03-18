@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<widget xmlns = "http://www.w3.org/ns/widgets"
+    xmlns:gap = "http://phonegap.com/ns/1.0"
+    id        = "ch.vizoom.app"
+    version   = "1.0.0">
+
+  <name>Vizoom App</name>
+
+  <description>
+      Vizoom App
+  </description>
+
+  <author href="http://vizoom.ch" email="info@vizoom.ch">Vizoom</author>
+
+  <preference name="orientation" value="portrait" />
+  <preference name="fullscreen" value="true" />
+  
+  <icon src="img/icon.png" width="345" height="345" />
+
+  <icon src="img/icon_96.png" gap:platform="android" gap:density="xhdpi" />
+  <icon src="img/icon_72.png" gap:platform="android" gap:density="hdpi" />
+  <icon src="img/icon_48.png" gap:platform="android" gap:density="mdpi" />
+  <icon src="img/icon_36.png" gap:platform="android" gap:density="ldpi" />
+
+  <preference name="permissions" value="none"/>
+  <feature name="http://api.phonegap.com/1.0/camera"/>
+  <feature name="http://api.phonegap.com/1.0/network"/>
+
+</widget>
