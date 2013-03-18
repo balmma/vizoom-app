@@ -12,13 +12,6 @@ var months = {"Jan":1, "Feb":2, "Mar":3, "Apr":4, "May":5, "Jun":6, "Jul":7, "Au
 var qrcode; // the current qrcode of an event
 var fileEntry; // file entry used for storage with phonegap
 
-// remove the 'x' button at the top of the login screen
-$("#login").on("pagecreate", function() {
-    if($("div:jqmData(role='header') a")[0].dataset.icon=="delete"){
-		$("div:jqmData(role='header')")[0].removeChild($("div:jqmData(role='header') a")[0]);
-	}
-});
-
 // function gets called, when DOM is ready 
 $(document).ready(function() {  
 	//click listeners
@@ -50,9 +43,11 @@ $(document).ready(function() {
 			login("","",true);
 		} else {
 			$.mobile.changePage('#login', 'pop', true, true);
+      remove_login_close_button();
 		}
 	} else {
 		$.mobile.changePage('#login', 'pop', true, true);
+    remove_login_close_button();
 	}
 	
 	// load credentials with phonegap
@@ -67,6 +62,12 @@ $( document ).bind( 'mobileinit', function(){
   $.mobile.loader.prototype.options.theme = "a";
   $.mobile.loader.prototype.options.html = "";
 });
+
+function remove_login_close_button(){
+  if($("#login div:jqmData(role='header') a")[0] && $("#login div:jqmData(role='header') a")[0].dataset.icon=="delete"){
+    $("#login div:jqmData(role='header')")[0].removeChild($("#login div:jqmData(role='header') a")[0]);
+  }
+}
 
 // helper function to get the events from server
 function update_events() {
