@@ -8,7 +8,6 @@ var events = new Array(); // a list of all events
 var locations = new Array(); // a lost of all locations
 var credentials; // the credentials, encoded
 var user; // user info
-var months = {"Jan":1, "Feb":2, "Mar":3, "Apr":4, "May":5, "Jun":6, "Jul":7, "Aug":8, "Sep":9, "Oct":10, "Nov":11, "Dec":12 };
 var qrcode; // the current qrcode of an event
 var fileEntry; // file entry used for storage with phonegap
 
@@ -71,64 +70,38 @@ function remove_login_close_button(){
 }
 
 // helper function to get the events from server
-function update_events() {
+function update_events(options) {
+  options = options || {}
 	$.ajax({
 		url: ROOT + '/_rest/events',
 		dataType: 'json',
 		headers: {'Authorization': 'Basic ' + credentials},
 		success: function(res){
-			for (var i = 0; i < res.length; i++) {
-				events[i] = res[i];
-			}
+			events = sortByStartDate(res);
+      if(options.onSuccess){
+        options.onSuccess();
+      }
 		}
 	});
 }
 
-// helper function to check wheater event a occurs after event b in time
-function isTimeAfterOther(a, b) { 
-	if( eval(a.start_time.substring(26, 30)) < eval(b.start_time.substring(26,30))) {
-		return false;
-	}
-	if( months[a.start_time.substring(4,7)] < months[b.start_time.substring(4,7)] ) {
-		return false;
-	}
-	if(eval(a.start_time.substring(8,10))<eval(b.start_time.substring(8,10))){
-		return false;
-	}
-	if(eval(a.start_time.substring(11,13))<eval(b.start_time.substring(11,13))){
-		return false;
-	}
-	if(eval(a.start_time.substring(14,16))<eval(b.start_time.substring(14,16))){
-		return false;
-	}
-	return true;
-}
-
 // sort all the loaded events by date. 
-function sortEventsByDate() {
-	var myEvents = events, i=0, j=0, tmp;
-	for(i=0;i<myEvents.length;i++){
-		for(j=i;j<myEvents.length-1;j++){
-			if(isTimeAfterOther(myEvents[j], myEvents[j+1])){
-				tmp = myEvents[j+1];
-				myEvents[j+1] = myEvents[j];
-				myEvents[j] = tmp;
-			}
-		}
-	}
-	return myEvents;
+function sortByStartDate(events) {
+	return _.sortBy(events,function(event){return moment(event.start_time);});
 }
 
 // helper function to get the locations from server
-function update_locations() {
+function update_locations(options) {
+  options = options || {}
 	$.ajax({
 		url: ROOT + '/_rest/locations',
 		dataType: 'json',
 		headers: {'Authorization': 'Basic ' + credentials},
 		success: function(res){
-			for (var i = 0; i < res.length; i++) {
-				locations[i] = res[i];
-			}
+			locations = res;
+      if(options.onSuccess){
+        options.onSuccess();
+      }
 		}
 	});
 }
@@ -155,11 +128,10 @@ function display_events(list_name, nr_of_items) {
 		(nr_of_items==0) ? show_events() : load_upcoming_events();
 		return;
 	}
-	events = sortEventsByDate();
 	if(nr_of_items==0 || nr_of_items>events.length)
 		nr_of_items = events.length;
 	for (i = 0; i < nr_of_items; i++) {
-		s += "<li data-corners=\"false\" data-shadow=\"false\" data-iconshadow=\"true\" data-wrapperels=\"div\" data-icon=\"arrow-r\" data-iconpos=\"right\" data-theme=\"c\" class=\"ui-btn ui-btn-icon-right ui-li-has-arrow ui-li ui-li-has-thumb ui-btn-up-c\"><div class=\"ui-btn-inner ui-li\"><div class=\"ui-btn-text\"><a href=\"#event_detail\" data-transition=\"slide\" class=\"ui-link-inherit\" onclick=\"display_event_detail('" + events[i].href + "')\"><img id=\"" + list_name + events[i].id + "\" class=\"ui-li-thumb\" width=\"70px\"><h3 class=\"ui-li-heading\">" + events[i].name + "</h3><p class=\"ui-li-desc\">" + events[i].location.name + ", " + events[i].start_time.substring(0,16) + "</p>	</a></div><span class=\"ui-icon ui-icon-arrow-r ui-icon-shadow\">&nbsp;</span></div></li>";
+		s += "<li data-corners=\"false\" data-shadow=\"false\" data-iconshadow=\"true\" data-wrapperels=\"div\" data-icon=\"arrow-r\" data-iconpos=\"right\" data-theme=\"c\" class=\"ui-btn ui-btn-icon-right ui-li-has-arrow ui-li ui-li-has-thumb ui-btn-up-c\"><div class=\"ui-btn-inner ui-li\"><div class=\"ui-btn-text\"><a href=\"#event_detail\" data-transition=\"slide\" class=\"ui-link-inherit\" onclick=\"display_event_detail('" + events[i].href + "')\"><img id=\"" + list_name + events[i].id + "\" class=\"ui-li-thumb\" width=\"70px\"><h3 class=\"ui-li-heading\">" + events[i].name + "</h3><p class=\"ui-li-desc\">" + events[i].location.name + ", " + moment(events[i].start_time).format("dd, DD.MM.YYYY HH:mm") + "</p>	</a></div><span class=\"ui-icon ui-icon-arrow-r ui-icon-shadow\">&nbsp;</span></div></li>";
 		$.ajax({
 			url: ROOT + events[i].href,
 			dataType: 'json',
@@ -183,7 +155,6 @@ function display_events(list_name, nr_of_items) {
 // helper function to fill and display the my events list 
 function display_my_events(list_name) {
 	var list = $("#"+list_name)[0], s = "", i, event, count=0;
-	events = sortEventsByDate();
 	for (i = 0; i < events.length; i++) {
 		if(events[i].participation_status == "confirmed_as_friend" ){
 			count++;
@@ -230,26 +201,22 @@ function display_locations(list_name) {
 
 // helper function to load the events. 
 function show_events() {
-	update_events();
-	window.setTimeout(function(){display_events("eventlist", 0)},500);
+	update_events({onSuccess: function(){display_events("eventlist", 0);}});
 }
 
 // helper function to load all my events. 
 function show_my_events() {
-	update_events();
-	window.setTimeout(function(){display_my_events("participating_eventlist")},500);
+	update_events({onSuccess: function(){display_my_events("participating_eventlist")}});
 }
 
 // helper function to load the location list. 
 function show_locations() {
-	update_locations();
-	window.setTimeout(function(){display_locations("locationlist")},500);
+	update_locations({onSuccess: function(){display_locations("locationlist");}});
 }
 
 // helper function to load the upcoming events. 
 function load_upcoming_events() { 
-	update_events();
-	window.setTimeout(function(){display_events("upcoming_eventlist", 5)},500);
+	update_events({onSuccess: function(){display_events("upcoming_eventlist", 5);}});
 }
 
 // loads the qr code image
@@ -267,7 +234,7 @@ function display_event_detail(event_href) {
 		success: function(res){
 			var artists = "", genres = "", i;
 			$('#event_detail_title').html('<h1>' + res.name + '</h1>');
-			$('#event_detail_time').html('<br/><b>Starts at:</b> ' + res.start_time.substring(0,16) + ' <br/><b>Finishes at:</b> ' + res.end_time.substring(0,16));
+			$('#event_detail_time').html('<br/><b>Starts at:</b> ' + moment(res.start_time).format("dd, DD.MM.YYYY HH:mm") + ' <br/><b>Finishes at:</b> ' + moment(res.end_time).format("dd, DD.MM.YYYY HH:mm"));
 			$('#event_detail_location').html("<b>Location:</b> <a href=\"#location_detail\"  data-transition=\"slide\" onclick=\"display_location_detail('" + res.location.href + "')\">" + res.location.name + '</a>');
 			for(i = 0; i < res.artists.length; i++){
 				artists += '<li>' + res.artists[i].name + '</li>';
@@ -278,7 +245,7 @@ function display_event_detail(event_href) {
 			for(i = 0; i < res.genres.length; i++){
 				genres += '<li>' + res.genres[i].name + '</li>';
 			}
-			$('#event_detail_information').html('<b>Min age:</b> ' + res.min_age + '<br/><b>Music genre:</b> <br/><ul>' + genres + '</ul><br/><b>Price:</b> ' + (res.price - res.friend_discount) + '.- instead of <strike>' + res.price + '.-</strike>');
+			$('#event_detail_information').html('<b>Min age:</b> ' + res.min_age + '<br/><b>Music genre:</b> <br/><ul>' + genres + '</ul><br/><b>Price:</b> ' + (res.price - res.friend_discount).toFixed(2) + ' instead of <strike>' + res.price.toFixed(2) + '</strike>');
 			if(res.participation_status == "no_participation_yet"){
 				$('#event_detail_status').html('<b>Status:</b> You are not participating. <a onclick=\"participate(\'' + res.actions.participate + '\', \''+res.id+ '\')\" data-role="button" data-theme="e" data-mini="true">Registrate on friendlist.</a>');
 			}
