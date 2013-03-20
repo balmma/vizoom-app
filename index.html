@@ -64,17 +64,7 @@
 						<h1>Vizoom</h1>
 					</td>
 					<td class="viHeaderRight">
-						<div>
-							<a data-inline="true" data-role="button" data-icon="gear" data-theme="c" data-iconpos="notext" class="viHeaderButton" id="viOptionsButton0" onclick="show_OptionsFlyout()">Settings</a>
-							<div class="viOptionsFlyout" id="viOptionsFlyout0">
-								<div class="viOptionsFlyoutInner">
-									<ul data-role="listview" data-inset="true" class="viOptionsFlyoutChoiceGroup" data-filter="false">
-										<li><a href="#help" data-transition="pop" onclick="hide_OptionsFlyout()">Help</a></li>
-										<li><a href="#user_information" data-transition="pop" onclick="hide_OptionsFlyout()">Settings</a></li>
-									</ul>
-								</div>
-							</div>
-						</div>
+						
 					</td>
 				</tr>
 			</tbody>
@@ -83,10 +73,12 @@
 		<!-- /header -->
 		<div data-role="content" id="homecontent">
 			<ul data-role="listview" data-inset="true" data-filter="false">
-				<li><a href="#news" id="swipetohome" data-transition="slide" onclick="load_upcoming_events()">News</a></li>
-				<li><a href="#events" data-transition="slide" onclick="show_events()">Events</a></li>
-				<li><a href="#location" data-transition="slide" onclick="show_locations()">Locations</a></li>
-				<li><a href="#myevents" data-transition="slide" onclick="show_my_events()">MyEvents</a></li>
+				<li><a href="#news" id="swipetohome" data-transition="fade" onclick="load_upcoming_events()">News</a></li>
+				<li><a href="#events" data-transition="fade" onclick="show_events()">Events</a></li>
+				<li><a href="#location" data-transition="fade" onclick="show_locations()">Locations</a></li>
+				<li><a href="#myevents" data-transition="fade" onclick="show_my_events()">MyEvents</a></li>
+				<li data-icon="gear"><a href="#user_information" data-transition="fade" >Settings</a></li>
+				<li data-icon="info"><a href="#help" data-transition="fade">Help</a></li>
 			</ul>
 		</div>
 		<!-- /content -->
@@ -111,10 +103,12 @@
 		</div>
 		<div data-role="content" id="homecontent">
 			<ul data-role="listview" data-inset="true" data-filter="false">
-				<li><a href="#news" id="swipetohome" data-transition="slide" onclick="load_upcoming_events()">News</a></li>
-				<li><a href="#events" data-transition="slide" onclick="show_events()">Events</a></li>
-				<li><a href="#location" data-transition="slide" onclick="show_locations()">Locations</a></li>
-				<li><a href="#myevents" data-transition="slide" onclick="show_my_events()">MyEvents</a></li>
+				<li><a href="#news" id="swipetohome" data-transition="fade" onclick="load_upcoming_events()">News</a></li>
+				<li><a href="#events" data-transition="fade" onclick="show_events()">Events</a></li>
+				<li><a href="#location" data-transition="fade" onclick="show_locations()">Locations</a></li>
+				<li><a href="#myevents" data-transition="fade" onclick="show_my_events()">MyEvents</a></li>
+				<li data-icon="gear"><a href="#user_information" data-transition="fade" >Settings</a></li>
+				<li data-icon="info"><a href="#help" data-transition="fade">Help</a></li>
 			</ul>
 		</div>
 	</div> 
@@ -146,7 +140,7 @@
 			<tbody>
 				<tr>
 					<td class="viHeaderLeft">
-						<a href="#navi" class="viHeaderButton" data-role="button" data-icon="grid" data-theme="c" data-iconpos="notext">Navi</a>
+						<a href="#navi" class="viHeaderButton" data-role="button" data-icon="grid" data-theme="c" data-inline="true" data-mini="true" data-iconpos="left">Navi</a>
 					</td>
 					<td class="viHeaderCenter">
 						<table width="100%">
@@ -160,17 +154,7 @@
 							</tr>
 						</table>
 					<td class="viHeaderRight">
-						<div>
-							<a data-inline="true" data-role="button" data-icon="gear" data-theme="c" data-iconpos="notext" class="viHeaderButton" id="viOptionsButton1"  onclick="show_OptionsFlyout()">Settings</a>
-							<div class="viOptionsFlyout" id="viOptionsFlyout1">
-								<div class="viOptionsFlyoutInner">
-									<ul data-role="listview" data-inset="true" class="viOptionsFlyoutChoiceGroup" data-filter="false">
-										<li><a href="#help" data-transition="pop" onclick="hide_OptionsFlyout()">Help</a></li>
-										<li><a href="#user_information" data-transition="pop" onclick="hide_OptionsFlyout()">Settings</a></li>
-									</ul>
-								</div>
-							</div>
-						</div>
+						
 					</td>
 				</tr>
 			</tbody>
@@ -181,7 +165,7 @@
 			<h2>Latest News:</h2>
 			Finally the new App is online! Enjoy it. Feedback is heighly appreciated.<br/>
 			<h2>Upcoming events:</h2>
-			<ul id="upcoming_eventlist" data-role="listview" class="ui-listview" width="100%"></ul>
+			<ul id="upcoming_eventlist" data-role="listview" data-divider-theme="c" class="ui-listview" width="100%"></ul>
 			<br/>
 		</div>
 		<!-- /content -->
@@ -198,7 +182,7 @@
 			<tbody>
 				<tr>
 					<td class="viHeaderLeft">
-						<a href="#navi" class="viHeaderButton" data-role="button" data-icon="grid" data-theme="c" data-iconpos="notext" >Navi</a>
+						<a href="#navi" class="viHeaderButton" data-role="button" data-icon="grid" data-theme="c" data-inline="true" data-mini="true" data-iconpos="left">Navi</a>
 					</td>
 					<td class="viHeaderCenter">
 						<table width="100%">
@@ -212,17 +196,7 @@
 							</tr>
 						</table>
 					<td class="viHeaderRight">
-						<div>
-							<a data-inline="true" data-role="button" data-icon="gear" data-theme="c" data-iconpos="notext" class="viHeaderButton" id="viOptionsButton2" onclick="show_OptionsFlyout()">Settings</a>
-							<div class="viOptionsFlyout" id="viOptionsFlyout2">
-								<div class="viOptionsFlyoutInner">
-									<ul data-role="listview" data-inset="true" class="viOptionsFlyoutChoiceGroup" data-filter="false">
-										<li><a href="#help" data-transition="pop" onclick="hide_OptionsFlyout()">Help</a></li>
-										<li><a href="#user_information" data-transition="pop" onclick="hide_OptionsFlyout()">Settings</a></li>
-									</ul>
-								</div>
-							</div>
-						</div>
+						
 					</td>
 				</tr>
 			</tbody>
@@ -230,7 +204,7 @@
 		</div>
 		<!-- /header -->
 		<div data-role="content" id="eventscontent">
-			<ul id="eventlist" data-filter="true" data-role="listview" class="ui-listview" width="100%"></ul>
+			<ul id="eventlist" data-filter="true" data-divider-theme="c" data-inset="true" data-role="listview" class="ui-listview" width="100%"></ul>
 			<br/>
 		</div>
 		<!-- /content -->
@@ -250,7 +224,7 @@
 						<table width="100%">
 							<tr>
 								<td width="50%">
-									<a href="#events" class="viHeaderButton" data-rel="back" data-role="button" data-iconpos="notext" data-theme="c" data-icon="arrow-l" data-transition="slide">Back</a>
+									<a href="#events" class="viHeaderButton" data-rel="back" data-role="button" data-iconpos="notext" data-theme="c" data-icon="arrow-l" data-transition="fade">Back</a>
 								</td>
 								<td width="50%">
 									<a href="#navi" class="viHeaderButton" data-role="button" data-icon="grid" data-theme="c" data-iconpos="notext">Navi</a>
@@ -275,8 +249,8 @@
 							<div class="viOptionsFlyout" id="viOptionsFlyout3">
 								<div class="viOptionsFlyoutInner">
 									<ul data-role="listview" data-inset="true" class="viOptionsFlyoutChoiceGroup" data-filter="false">
-										<li><a href="#help" data-transition="pop" onclick="hide_OptionsFlyout()">Help</a></li>
-										<li><a href="#user_information" data-transition="pop" onclick="hide_OptionsFlyout()">Settings</a></li>
+										<li><a href="#help" data-transition="fade" onclick="hide_OptionsFlyout()">Help</a></li>
+										<li><a href="#user_information" data-transition="fade" onclick="hide_OptionsFlyout()">Settings</a></li>
 									</ul>
 								</div>
 							</div>
@@ -316,7 +290,7 @@
 						<table width="100%">
 							<tr>
 								<td width="50%">
-									<a href="#location" class="viHeaderButton" data-rel="back" data-role="button" data-iconpos="notext" data-theme="c" data-icon="arrow-l" data-transition="slide">Back</a>
+									<a href="#location" class="viHeaderButton" data-rel="back" data-role="button" data-iconpos="notext" data-theme="c" data-icon="arrow-l" data-transition="fade">Back</a>
 								</td>
 								<td width="50%">
 									<a href="#navi" class="viHeaderButton" data-role="button" data-icon="grid" data-theme="c" data-iconpos="notext">Navi</a>
@@ -341,8 +315,8 @@
 							<div class="viOptionsFlyout" id="viOptionsFlyout4">
 								<div class="viOptionsFlyoutInner">
 									<ul data-role="listview" data-inset="true" class="viOptionsFlyoutChoiceGroup" data-filter="false">
-										<li><a href="#help" data-transition="pop" onclick="hide_OptionsFlyout()">Help</a></li>
-										<li><a href="#user_information" data-transition="pop" onclick="hide_OptionsFlyout()">Settings</a></li>
+										<li><a href="#help" data-transition="fade" onclick="hide_OptionsFlyout()">Help</a></li>
+										<li><a href="#user_information" data-transition="fade" onclick="hide_OptionsFlyout()">Settings</a></li>
 									</ul>
 								</div>
 							</div>
@@ -375,7 +349,7 @@
 			<tbody>
 				<tr>
 					<td class="viHeaderLeft">
-						<a href="#navi" class="viHeaderButton" data-role="button" data-icon="grid" data-theme="c" data-iconpos="notext" >Navi</a>
+						<a href="#navi" class="viHeaderButton" data-role="button" data-icon="grid" data-theme="c" data-inline="true" data-mini="true" data-iconpos="left">Navi</a>
 					</td>
 					<td class="viHeaderCenter">
 						<table width="100%">
@@ -389,17 +363,7 @@
 							</tr>
 						</table>
 					<td class="viHeaderRight">
-						<div>
-							<a data-inline="true" data-role="button" data-icon="gear" data-theme="c" data-iconpos="notext" class="viHeaderButton" id="viOptionsButton5" onclick="show_OptionsFlyout()">Settings</a>
-							<div class="viOptionsFlyout" id="viOptionsFlyout5">
-								<div class="viOptionsFlyoutInner">
-									<ul data-role="listview" data-inset="true" class="viOptionsFlyoutChoiceGroup" data-filter="false">
-										<li><a href="#help" data-transition="pop" onclick="hide_OptionsFlyout()">Help</a></li>
-										<li><a href="#user_information" data-transition="pop" onclick="hide_OptionsFlyout()">Settings</a></li>
-									</ul>
-								</div>
-							</div>
-						</div>
+						
 					</td>
 				</tr>
 			</tbody>
@@ -407,7 +371,7 @@
 		</div>
 		<!-- /header -->
 		<div data-role="content" id="calendarcontent">
-			<ul id="locationlist" data-filter="true" data-role="listview" class="ui-listview"width="100%"></ul>
+			<ul id="locationlist" data-filter="true" data-role="listview" data-divider-theme="c" data-inset="true"class="ui-listview"width="100%"></ul>
 			<br/>
 		</div>
 		<!-- /content -->
@@ -424,7 +388,7 @@
 			<tbody>
 				<tr>
 					<td class="viHeaderLeft">
-						<a href="#navi" class="viHeaderButton" data-role="button" data-icon="grid" data-theme="c" data-iconpos="notext" >Navi</a>
+						<a href="#navi" class="viHeaderButton" data-role="button" data-icon="grid" data-theme="c" data-inline="true" data-mini="true" data-iconpos="left">Navi</a>
 					</td>
 					<td class="viHeaderCenter">
 						<table width="100%">
@@ -438,17 +402,7 @@
 							</tr>
 						</table>
 					<td class="viHeaderRight">
-						<div>
-							<a data-inline="true" data-role="button" data-icon="gear" data-theme="c" data-iconpos="notext" class="viHeaderButton" id="viOptionsButton6" onclick="show_OptionsFlyout()">Settings</a>
-							<div class="viOptionsFlyout" id="viOptionsFlyout6">
-								<div class="viOptionsFlyoutInner">
-									<ul data-role="listview" data-inset="true" class="viOptionsFlyoutChoiceGroup" data-filter="false">
-										<li><a href="#help" data-transition="pop" onclick="hide_OptionsFlyout()">Help</a></li>
-										<li><a href="#user_information" data-transition="pop" onclick="hide_OptionsFlyout()">Settings</a></li>
-									</ul>
-								</div>
-							</div>
-						</div>
+						
 					</td>
 				</tr>
 			</tbody>
@@ -457,7 +411,7 @@
 		<!-- /header -->
 		<div data-role="content" id="myeventscontent">
 			<h3>Your enrolled events:</h3>
-			<ul id="participating_eventlist" data-filter="true" data-role="listview" class="ui-listview" width="100%"></ul>
+			<ul id="participating_eventlist" data-filter="true" data-role="listview" data-divider-theme="c" data-inset="true" class="ui-listview" width="100%"></ul>
 			<br/>
 			<div id="myevents_status_message"></div>
 		</div>
@@ -484,9 +438,9 @@
 		<div data-role="content">
 			<h2>Help</h2>
 			<ul>
-				<li>In order to switch pages simply click the <a href="" data-role="button" data-icon="grid" data-inline="true" data-iconpos="notext">Navi</a> button.</li>
-				<li>To see this help message, click <a href="" data-role="button" data-icon="gear" data-inline="true" data-iconpos="notext">Help</a> and select "Help".</li>
-				<li>To change the settings click <a href="" data-role="button" data-icon="gear" data-inline="true" data-iconpos="notext">Settings</a> and select "Settings".</li>
+				<li>In order to switch pages simply click the <a href="#navi" data-role="button" data-icon="grid" data-theme="c" data-inline="true" data-mini="true" data-iconpos="left">Navi</a> button.</li>
+				<li>To see this help message, click <a href="" data-role="button" data-icon="info" data-inline="true" data-iconpos="right" data-mini="true" data-theme="c">Help</a> in the navigation view.</li>
+				<li>To change the settings click <a href="" data-role="button" data-icon="gear" data-inline="true" data-iconpos="right" data-mini="true" data-theme="c">Settings</a> in the navigation view.</li>
 				<li>Login/logout and access to the user settings can be done via the settings menu.</li>
 			</ul>
 			<br/>
@@ -494,7 +448,7 @@
 			This App was developed by Vizoom in 2013. All rights reserved. <br>
 			To contact us, please write an email to <a href="mailto:info@vizoom.ch">info@vizoom.ch</a>. <br/>
 			<br/><b>Address:</b> <br/>vizoom<br/>Zürichweg 6a<br/>CH-8153 Rümlang<br/>
-			<a href="#agb" data-transition="pop" data-role="button">AGB in German</a>
+			<a href="#agb" data-transition="fade" data-role="button">AGB in German</a>
 		</div>
 	</div> 
 	
@@ -548,10 +502,10 @@
 		</div>
 		<div data-role="content">
 			<div id="user_info_welcome_message" >Logged in as </div>
-			<a href="#home" data-role="button" data-transition="pop" id="login_out_button" onclick="logout()">Logout</a>
-			<a href="#user_password" data-role="button" data-icon="gear" data-iconpos="right" data-transition="pop" >Change Password</a>
-			<a href="#user-info" data-role="button" data-icon="gear" data-iconpos="right" data-transition="pop" onclick="loadUserInfoEditing()">Edit User Info</a>
-			<a href="#settings" data-role="button" data-icon="gear" data-iconpos="right" data-transition="pop">Application Settings</a>
+			<a href="#home" data-role="button" data-transition="fade" id="login_out_button" onclick="logout()">Logout</a>
+			<a href="#user_password" data-role="button" data-icon="gear" data-iconpos="right" data-transition="fade" >Change Password</a>
+			<a href="#user-info" data-role="button" data-icon="gear" data-iconpos="right" data-transition="fade" onclick="loadUserInfoEditing()">Edit User Info</a>
+			<a href="#settings" data-role="button" data-icon="gear" data-iconpos="right" data-transition="fade">Application Settings</a>
 		</div>
 	</div> 
 	
@@ -728,7 +682,7 @@
 			</div>
 			<div data-role="fieldcontain" class="ui-hide-label">
 				<fieldset data-role="agb">
-				   <legend>Agree to the <a href="#agb" data-transition="pop">AGB</a>:</legend>
+				   <legend>Agree to the <a href="#agb" data-transition="fade">AGB</a>:</legend>
 				   <input type="checkbox" name="checkbox-agree" id="checkbox-agree" class="custom" />
 				   <label for="checkbox-agree">I agree</label>
 				</fieldset>

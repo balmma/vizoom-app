@@ -28,8 +28,7 @@
 
 .viHeader tr .viHeaderLeft {
 	width: 20%;
-	line-height: 30px !important;
-	vertical-align: text-top !important;   
+	vertical-align: middle !important;   
 }
 
 .viHeader tr .viHeaderCenter {
@@ -45,9 +44,7 @@
 }
 
 .viHeader tr td .viHeaderButton {
-  margin-left: 10px;
   margin-right: 10px;
-  margin-top: 15px;
 }
 
 .viHeaderLogo {
@@ -59,7 +56,6 @@
 }
 
 .viPage {
-	min-height:100% !important;
 	position:relative !important;
 }
 
@@ -117,7 +113,11 @@
 }
 
 #event_detail_status .ui-btn {
-  margin-top: 20px;
-  margin-bottom: 20px;
+ 	margin-top: 20px;
+ 	margin-bottom: 20px;
+}
+
+.viLocationImage {
+	width: 100%;
 }
 

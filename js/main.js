@@ -5,14 +5,28 @@
 // Variables
 var ROOT = 'http://vizoom.smss.ch'; // root url
 var events = new Array(); // a list of all events
-var locations = new Array(); // a lost of all locations
+var locations = new Array(); // a list of all locations
 var credentials; // the credentials, encoded
 var user; // user info
 var qrcode; // the current qrcode of an event
-var fileEntry; // file entry used for storage with phonegap
+
+var fixgeometry = function() {  
+  scroll(0, 0);  
+  var viewport_height = $(window).height();   
+  $("div#home").css('min-height', viewport_height+'px');
+  $("div#news").css('min-height', viewport_height+'px');
+  $("div#events").css('min-height', viewport_height+'px');
+  $("div#event_detail").css('min-height', viewport_height+'px');
+  $("div#location_detail").css('min-height', viewport_height+'px');
+  $("div#location").css('min-height', viewport_height+'px');
+  $("div#myevents").css('min-height', viewport_height+'px');
+};
 
 // function gets called, when DOM is ready 
 $(document).ready(function() {
+
+  // make sure that the window size is correct
+  	$(window).bind('orientationchange resize pageshow', fixgeometry);
   	
   //click listeners
 	$('#login_button').click(function(event){
@@ -43,11 +57,11 @@ $(document).ready(function() {
 			login("","",true);
 		} else {
 			$.mobile.changePage('#login', 'pop', true, true);
-      remove_login_close_button();
+      		remove_login_close_button();
 		}
 	} else {
 		$.mobile.changePage('#login', 'pop', true, true);
-    remove_login_close_button();
+    	remove_login_close_button();
 	}
 	
 	// load credentials with phonegap
@@ -108,8 +122,13 @@ function update_locations(options) {
 
 // helper function to update the login status
 function update_login_status() {
+	if(user==null || user== "undefined"){
+		loadUser();
+		window.setTimeout(function(){update_login_status()},300);
+		return;	
+	}
 	if(credentials.length>0){
-		$('#user_info_welcome_message')[0].innerHTML = "You are logged in as " + $('#username').val() + ".";
+		$('#user_info_welcome_message')[0].innerHTML = "You are logged in as " + user.email + ".";
 		$('#login_out_button')[0].innerHTML = "Logout";
 		$('#login_out_button')[0].setAttribute("href", "");
 		$('#login_out_button')[0].setAttribute("onclick", "logout()");
@@ -123,15 +142,20 @@ function update_login_status() {
 
 // helper function to fill and display the events list 
 function display_events(list_name, nr_of_items) {
-	var list = $("#"+list_name)[0], s = "", i, event;
+	var list = $("#"+list_name), s = "", i, event;
 	if(events.length==0){
 		(nr_of_items==0) ? show_events() : load_upcoming_events();
 		return;
 	}
 	if(nr_of_items==0 || nr_of_items>events.length)
 		nr_of_items = events.length;
+	var last_date;
 	for (i = 0; i < nr_of_items; i++) {
-		s += "<li data-corners=\"false\" data-shadow=\"false\" data-iconshadow=\"true\" data-wrapperels=\"div\" data-icon=\"arrow-r\" data-iconpos=\"right\" data-theme=\"c\" class=\"ui-btn ui-btn-icon-right ui-li-has-arrow ui-li ui-li-has-thumb ui-btn-up-c\"><div class=\"ui-btn-inner ui-li\"><div class=\"ui-btn-text\"><a href=\"#event_detail\" data-transition=\"slide\" class=\"ui-link-inherit\" onclick=\"display_event_detail('" + events[i].href + "')\"><img id=\"" + list_name + events[i].id + "\" class=\"ui-li-thumb\" width=\"70px\"><h3 class=\"ui-li-heading\">" + events[i].name + "</h3><p class=\"ui-li-desc\">" + events[i].location.name + ", " + moment(events[i].start_time).format("dd, DD.MM.YYYY HH:mm") + "</p>	</a></div><span class=\"ui-icon ui-icon-arrow-r ui-icon-shadow\">&nbsp;</span></div></li>";
+		if(last_date=="undefined" || moment(events[i].start_time).format("DD.MM.YYYY")!=last_date){
+			s+="<li data-role=\"list-divider\">"+moment(events[i].start_time).format("dd, DD.MM.YYYY")+"</li>";
+			last_date = moment(events[i].start_time).format("DD.MM.YYYY")
+		}
+		s += "<li><a href=\"#event_detail\" data-transition=\"fade\" onclick=\"display_event_detail('" + events[i].href + "')\"><img id=\"" + list_name + events[i].id + "\" width=\"70px\"><h3>" + events[i].name + "</h3><p>" + events[i].location.name + ", Start: " + moment(events[i].start_time).format("HH:mm") + "</p></a></li>";
 		$.ajax({
 			url: ROOT + events[i].href,
 			dataType: 'json',
@@ -149,16 +173,23 @@ function display_events(list_name, nr_of_items) {
 			}
 		});
 	}
-	list.innerHTML = s;
+	list[0].innerHTML = s;
+	list.listview('refresh');
 }
 
 // helper function to fill and display the my events list 
 function display_my_events(list_name) {
-	var list = $("#"+list_name)[0], s = "", i, event, count=0;
+	var list = $("#"+list_name), s = "", i, event, count=0;
+	var last_date;
 	for (i = 0; i < events.length; i++) {
 		if(events[i].participation_status == "confirmed_as_friend" ){
 			count++;
-			s += "<li data-corners=\"false\" data-shadow=\"false\" data-iconshadow=\"true\" data-wrapperels=\"div\" data-icon=\"arrow-r\" data-iconpos=\"right\" data-theme=\"c\" class=\"ui-btn ui-btn-icon-right ui-li-has-arrow ui-li ui-li-has-thumb ui-btn-up-c\"><div class=\"ui-btn-inner ui-li\"><div class=\"ui-btn-text\"><a href=\"#event_detail\" data-transition=\"slide\" class=\"ui-link-inherit\" onclick=\"display_event_detail('" + events[i].href + "')\"><img id=\"" + list_name + events[i].id + "\" class=\"ui-li-thumb\"width=\"70px\"><h3 class=\"ui-li-heading\">" + events[i].name + "</h3><p class=\"ui-li-desc\">" + events[i].location.name + "</p>	</a></div><span class=\"ui-icon ui-icon-arrow-r ui-icon-shadow\">&nbsp;</span></div></li>";
+			if(last_date=="undefined" || moment(events[i].start_time).format("DD.MM.YYYY")!=last_date){
+				s+="<li data-role=\"list-divider\">"+moment(events[i].start_time).format("dd, DD.MM.YYYY")+"</li>";
+				last_date = moment(events[i].start_time).format("DD.MM.YYYY")
+			}
+			//s += "<li data-corners=\"false\" data-shadow=\"false\" data-iconshadow=\"true\" data-wrapperels=\"div\" data-icon=\"arrow-r\" data-iconpos=\"right\" data-theme=\"c\" class=\"ui-btn ui-btn-icon-right ui-li-has-arrow ui-li ui-li-has-thumb ui-btn-up-c\"><div class=\"ui-btn-inner ui-li\"><div class=\"ui-btn-text\"><a href=\"#event_detail\" data-transition=\"fade\" class=\"ui-link-inherit\" onclick=\"display_event_detail('" + events[i].href + "')\"><img id=\"" + list_name + events[i].id + "\" class=\"ui-li-thumb\"width=\"70px\"><h3 class=\"ui-li-heading\">" + events[i].name + "</h3><p class=\"ui-li-desc\">" + events[i].location.name + "</p>	</a></div><span class=\"ui-icon ui-icon-arrow-r ui-icon-shadow\">&nbsp;</span></div></li>";
+			s += "<li><a href=\"#event_detail\" data-transition=\"fade\" onclick=\"display_event_detail('" + events[i].href + "')\"><img id=\"" + list_name + events[i].id + "\" width=\"70px\"><h3>" + events[i].name + "</h3><p>" + events[i].location.name + ", Start: " + moment(events[i].start_time).format("HH:mm") + "</p></a></li>";
 			$.ajax({
 				url: ROOT + events[i].href,
 				dataType: 'json',
@@ -173,7 +204,8 @@ function display_my_events(list_name) {
 			});
 		}
 	}
-	list.innerHTML = s;
+	list[0].innerHTML = s;
+	list.listview('refresh');
 	if(count==0){
 		$("#myevents_status_message")[0].innerHTML = "No events selected yet.";
 	} else {
@@ -185,7 +217,7 @@ function display_my_events(list_name) {
 function display_locations(list_name) {
 	var list = $("#"+list_name)[0], s = "", i, event;
 	for (i = 0; i < locations.length; i++) {
-		s += "<li data-corners=\"false\" data-shadow=\"false\" data-iconshadow=\"true\" data-wrapperels=\"div\" data-icon=\"arrow-r\" data-iconpos=\"right\" data-theme=\"c\" class=\"ui-btn ui-btn-icon-right ui-li-has-arrow ui-li ui-li-has-thumb ui-btn-up-c\"><div class=\"ui-btn-inner ui-li\"><div class=\"ui-btn-text\"><a href=\"#location_detail\" data-transition=\"slide\" class=\"ui-link-inherit\" onclick=\"display_location_detail('" + locations[i].href + "')\"><img src=\"" + ROOT + locations[i].logo.src + "\" class=\"ui-li-thumb\" width=\"70px\"><h3 class=\"ui-li-heading\" >" + locations[i].name + "</h3><p class=\"ui-li-desc\" id=\"" + locations[i].id + "\"></p>	</a></div><span class=\"ui-icon ui-icon-arrow-r ui-icon-shadow\">&nbsp;</span></div></li>";
+		s += "<li data-corners=\"false\" data-shadow=\"false\" data-iconshadow=\"true\" data-wrapperels=\"div\" data-icon=\"arrow-r\" data-iconpos=\"right\" data-theme=\"c\" class=\"ui-btn ui-btn-icon-right ui-li-has-arrow ui-li ui-li-has-thumb ui-btn-up-c\"><div class=\"ui-btn-inner ui-li\"><div class=\"ui-btn-text\"><a href=\"#location_detail\" data-transition=\"fade\" class=\"ui-link-inherit\" onclick=\"display_location_detail('" + locations[i].href + "')\"><img src=\"" + ROOT + locations[i].logo.src + "\" class=\"ui-li-thumb\" width=\"70px\"><h3 class=\"ui-li-heading\" >" + locations[i].name + "</h3><p class=\"ui-li-desc\" id=\"" + locations[i].id + "\"></p>	</a></div><span class=\"ui-icon ui-icon-arrow-r ui-icon-shadow\">&nbsp;</span></div></li>";
 		$.ajax({
 			url: ROOT + locations[i].href,
 			dataType: 'json',
@@ -234,8 +266,8 @@ function display_event_detail(event_href) {
 		success: function(res){
 			var artists = "", genres = "", i;
 			$('#event_detail_title').html('<h1>' + res.name + '</h1>');
-			$('#event_detail_time').html('<br/><b>Starts at:</b> ' + moment(res.start_time).format("dd, DD.MM.YYYY HH:mm") + ' <br/><b>Finishes at:</b> ' + moment(res.end_time).format("dd, DD.MM.YYYY HH:mm"));
-			$('#event_detail_location').html("<b>Location:</b> <a href=\"#location_detail\"  data-transition=\"slide\" onclick=\"display_location_detail('" + res.location.href + "')\">" + res.location.name + '</a>');
+			$('#event_detail_time').html('<br/><b>Starts at:</b> ' + moment(res.start_time).format("dd, DD.MM.YYYY, HH:mm") + ' <br/><b>Finishes at:</b> ' + moment(res.end_time).format("dd, DD.MM.YYYY, HH:mm"));
+			$('#event_detail_location').html("<b>Location:</b> <a href=\"#location_detail\"  data-transition=\"fade\" onclick=\"display_location_detail('" + res.location.href + "')\">" + res.location.name + '</a>');
 			for(i = 0; i < res.artists.length; i++){
 				artists += '<li>' + res.artists[i].name + '</li>';
 			}
@@ -275,7 +307,7 @@ function display_location_detail(location_href) {
 			$('#location_detail_address').html('<b>Address: </b><br/><div style="margin-left:10px">' + res.street + '<br/>' + res.zip + " " + res.city + '<br/>' + res.country + '</div>');
 			$('#location_detail_description').html('<br/><b>Description:</b>' + res.description);
 			for(i = 0; i < res.images.length; i++){
-				images += '<img src=\"' + ROOT + res.images[i].normal.src + '\"/><br/>';
+				images += '<img src=\"' + ROOT + res.images[i].popup.src + '\" class="viLocationImage center"/><br/>';
 			}
 			$('#location_detail_images').html('<b>Images:</b> <br/>' + images);
 
@@ -302,30 +334,22 @@ function login(username,password,autologin){
 		}
 	}
 	$.ajax({
-	url: ROOT + '/_rest/events',
+	url: ROOT + '/_rest/check_login',
 	dataType: 'json',
 	headers: {'Authorization': 'Basic ' + credentials},
 	success: function(res){
-		if(res == "Authorization failed"){
-			$('#login_status').html("Ungültiges Login");
-		} else {
-			$.mobile.changePage('#home', 'pop', true, true);
-		}
+		$.mobile.changePage('#home', 'pop', true, true);
 		update_login_status();
 		update_events();
 		update_locations();
 		load_upcoming_events();
-		if($('#checkbox-savePassword').checked){
-			saveToFile();
-		}
 		$('#login_status').html("");
 	},
 	error: function (request, status, error) { // TODO status: 0, statusText: error
-		console.log(request);
-		if(request.responseText.indexOf("uthorization failed")>0){
+		if(request.status!=200){
 			$('#login_status').html("Ungültiges Login");
 		} else {
-			alert(request.status + " " + request.statusText + ": " + request.responseText);
+			alert("There was a connection error. Code: " + request.status + ", Status Text: " + request.statusText + ", Response Text: " + request.responseText + ". Please contact us with this message via <a href=\"mailto:info@vizoom.ch\">mail</a>");
 		}
 	}
 	});
@@ -470,8 +494,8 @@ function loadUserInfoEditing() {
 	}
 	// birthday
 	if(user.birthday!=null && user.birthday!="undefined" && user.birthday.length>0){
-		$("#update_date").attr("max", getCurrentDate());
-		$("#update_date").val(switchToJSDate(user.birthday));
+		$("#update_date").attr("max", moment(moment()).format("YYYY-MM-DD"));
+		$("#update_date").val(moment(user.birthday, "DD-MM-YYYY").format("YYYY-MM-DD")); 
 	}
 }
 
@@ -497,7 +521,7 @@ function update_user_info() {
 	if(country=="austria") country = "Österreich";
 	var mobile = $('#update_tel').val();
 	var email = $('#update_email').val();
-	var birthday = switchToServerDate($('#update_date').val());
+	var birthday = moment($('#update_date').val(),"YYYY-MM-DD").format("DD-MM-YYYY");
 	$.ajax({
 		url: ROOT + "/_rest/user",
 		type: 'PUT',
@@ -629,102 +653,27 @@ function hide_OptionsFlyout() {
 }
 
 // used to set the area code when the country has changed
+// TODO: don't just change placeholder but value. change correctly if already number entered
 function changeTelPlaceholder(selectField){
 	switch(selectField.selectedIndex)
 	{
 		case 0:
-			$('#update_tel')[0].setAttribute('placeholder','+41');
-			$('#tel')[0].setAttribute('placeholder','+41'); break;
+			$('#update_tel')[0].placeholder = '+41';
+			$('#tel')[0].placeholder = '+41'; break;
 		case 1:
-			$('#update_tel')[0].setAttribute('placeholder','+423');
-			$('#tel')[0].setAttribute('placeholder','+423'); break;
+			$('#update_tel')[0].placeholder = '+423';
+			$('#tel')[0].placeholder = '+423'; break;
 		case 2:
-			$('#update_tel')[0].setAttribute('placeholder','+49');
-			$('#tel')[0].setAttribute('placeholder','+49'); break;
+			$('#update_tel')[0].placeholder = '+49';
+			$('#tel')[0].placeholder = '+49'; break;
 		case 3:
-			$('#update_tel')[0].setAttribute('placeholder','+43');
-			$('#tel')[0].setAttribute('placeholder','+43'); break;
+			$('#update_tel')[0].placeholder = '+43';
+			$('#tel')[0].placeholder = '+43'; break;
 		case 4:
-			$('#update_tel')[0].setAttribute('placeholder','+33');
-			$('#tel')[0].setAttribute('placeholder','+33'); break;
+			$('#update_tel')[0].placeholder = '+33';
+			$('#tel')[0].placeholder = '+33'; break;
 		case 5:
-			$('#update_tel')[0].setAttribute('placeholder','+39');
-			$('#tel')[0].setAttribute('placeholder','+39'); break;
+			$('#update_tel')[0].placeholder = '+39';
+			$('#tel')[0].placeholder = '+39'; break;
 	}
 }
-
-// helper function to get the current date of the form yyyy-mm-dd
-function getCurrentDate(){
-	var today = new Date();
-	var dd = today.getDate();
-	var mm = today.getMonth()+1; //January is 0!
-
-	var yyyy = today.getFullYear();
-	if(dd<10){dd='0'+dd} if(mm<10){mm='0'+mm} today = yyyy+'-'+mm+'-'+dd;
-	return today;
-}
-
-function switchToJSDate(oldDate){
-	var dd = oldDate.substring(0,2);
-	var mm = oldDate.substring(3,5);
-	var yy = oldDate.substring(6,11);
-	return yy+"-"+mm+"-"+dd;
-}
-
-function switchToServerDate(oldDate){
-	var dd = oldDate.substring(8,10);
-	var mm = oldDate.substring(5,7);
-	var yy = oldDate.substring(0,4);
-	return dd+"-"+mm+"-"+yy;
-}
-
-
-// PHONEGAP FILE STORAGE HACKING START
-function gotFS(fileSystem) {
-	fileSystem.root.getFile("vizoom.txt", {create: true, exclusive: false}, gotFileEntry, fail);
-}
-
-function gotFileEntry(myFileEntry) {
-	fileEntry = myFileEntry;
-	loadFromFile();
-}
-
-function saveToFile() {
-	if(fileEntry == undefined){
-		console.log("fileEntry undefined");
-	}
-	else{
-		fileEntry.createWriter(gotFileWriter, fail);
-	}
-}
-
-function loadFromFile() {
-	if(fileEntry == undefined){
-		console.log("fileEntry undefined");
-	}
-	else{
-		fileEntry.file(gotFile, fail);
-	}
-}
-
-function gotFile(file) {
-	var reader = new FileReader();
-	reader.onloadend = function(evt) {
-		console.log("read from file successfully");
-		credentials = evt.target.result;
-		$.mobile.changePage('#home', 'pop', true, true);
-	};
-	reader.readAsText(file);
-}
-
-function gotFileWriter(writer) {
-	writer.onwriteend = function(evt) {
-		console.log("saved to file successfully");
-	};
-	writer.write(credentials.toString());
-}
-
-function fail(error) {
-	console.log(error.code);
-}
-// PHONEGAP FILE STORAGE HACKING END
