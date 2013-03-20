@@ -188,7 +188,6 @@ function display_my_events(list_name) {
 				s+="<li data-role=\"list-divider\">"+moment(events[i].start_time).format("dd, DD.MM.YYYY")+"</li>";
 				last_date = moment(events[i].start_time).format("DD.MM.YYYY")
 			}
-			//s += "<li data-corners=\"false\" data-shadow=\"false\" data-iconshadow=\"true\" data-wrapperels=\"div\" data-icon=\"arrow-r\" data-iconpos=\"right\" data-theme=\"c\" class=\"ui-btn ui-btn-icon-right ui-li-has-arrow ui-li ui-li-has-thumb ui-btn-up-c\"><div class=\"ui-btn-inner ui-li\"><div class=\"ui-btn-text\"><a href=\"#event_detail\" data-transition=\"fade\" class=\"ui-link-inherit\" onclick=\"display_event_detail('" + events[i].href + "')\"><img id=\"" + list_name + events[i].id + "\" class=\"ui-li-thumb\"width=\"70px\"><h3 class=\"ui-li-heading\">" + events[i].name + "</h3><p class=\"ui-li-desc\">" + events[i].location.name + "</p>	</a></div><span class=\"ui-icon ui-icon-arrow-r ui-icon-shadow\">&nbsp;</span></div></li>";
 			s += "<li><a href=\"#event_detail\" data-transition=\"fade\" onclick=\"display_event_detail('" + events[i].href + "')\"><img id=\"" + list_name + events[i].id + "\" width=\"70px\"><h3>" + events[i].name + "</h3><p>" + events[i].location.name + ", Start: " + moment(events[i].start_time).format("HH:mm") + "</p></a></li>";
 			$.ajax({
 				url: ROOT + events[i].href,
@@ -213,11 +212,11 @@ function display_my_events(list_name) {
 	}
 }
 
-// helper function to fill and display the upcoming events list 
+// helper function to fill and display the locations list 
 function display_locations(list_name) {
-	var list = $("#"+list_name)[0], s = "", i, event;
+	var list = $("#"+list_name), s = "", i, event;
 	for (i = 0; i < locations.length; i++) {
-		s += "<li data-corners=\"false\" data-shadow=\"false\" data-iconshadow=\"true\" data-wrapperels=\"div\" data-icon=\"arrow-r\" data-iconpos=\"right\" data-theme=\"c\" class=\"ui-btn ui-btn-icon-right ui-li-has-arrow ui-li ui-li-has-thumb ui-btn-up-c\"><div class=\"ui-btn-inner ui-li\"><div class=\"ui-btn-text\"><a href=\"#location_detail\" data-transition=\"fade\" class=\"ui-link-inherit\" onclick=\"display_location_detail('" + locations[i].href + "')\"><img src=\"" + ROOT + locations[i].logo.src + "\" class=\"ui-li-thumb\" width=\"70px\"><h3 class=\"ui-li-heading\" >" + locations[i].name + "</h3><p class=\"ui-li-desc\" id=\"" + locations[i].id + "\"></p>	</a></div><span class=\"ui-icon ui-icon-arrow-r ui-icon-shadow\">&nbsp;</span></div></li>";
+		s += "<li><a href=\"#location_detail\" data-transition=\"fade\" onclick=\"display_location_detail('" + locations[i].href + "')\"><img src=\"" + ROOT + locations[i].logo.src + "\"width=\"70px\"><h3>" + locations[i].name + "</h3><p id=\"" + locations[i].id + "\"></p></a></li>";
 		$.ajax({
 			url: ROOT + locations[i].href,
 			dataType: 'json',
@@ -228,7 +227,8 @@ function display_locations(list_name) {
 			}
 		});
 	}
-	list.innerHTML = s;
+	list[0].innerHTML = s;
+	list.listview('refresh');
 }
 
 // helper function to load the events. 
@@ -304,7 +304,7 @@ function display_location_detail(location_href) {
 			var images = "", i;
 			$('#location_detail_title').html('<h2>' + res.name + '</h2>');
 			$('#location_detail_logo').html('<img src="'+ROOT + res.logo.src+'"></img>');
-			$('#location_detail_address').html('<b>Address: </b><br/><div style="margin-left:10px">' + res.street + '<br/>' + res.zip + " " + res.city + '<br/>' + res.country + '</div>');
+			$('#location_detail_address').html('<b>Address: </b><br/><div style="margin-left:10px"><a href="geo:0,0?q='+res.street+'+'+res.citycode+'+'+res.city+'">' + res.street + '<br/>' + res.citycode + " " + res.city + '<br/>' + res.country + '</a></div>');
 			$('#location_detail_description').html('<br/><b>Description:</b>' + res.description);
 			for(i = 0; i < res.images.length; i++){
 				images += '<img src=\"' + ROOT + res.images[i].popup.src + '\" class="viLocationImage center"/><br/>';
