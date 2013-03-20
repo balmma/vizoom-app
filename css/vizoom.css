@@ -40,7 +40,6 @@
 .viHeader tr .viHeaderRight {
 	text-align: right;
 	width: 30%;
-	line-height: 30px !important;
 }
 
 .viHeader tr td .viHeaderButton {

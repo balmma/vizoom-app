@@ -290,7 +290,7 @@
 						<table width="100%">
 							<tr>
 								<td width="50%">
-									<a href="#location" class="viHeaderButton" data-rel="back" data-role="button" data-iconpos="notext" data-theme="c" data-icon="arrow-l" data-transition="fade">Back</a>
+									<a href="#location" class="viHeaderButton" data-rel="back" data-role="button" data-iconpos="left" data-theme="c" data-icon="arrow-l" data-mini="true" data-inline="true" data-transition="fade">Back</a>
 								</td>
 								<td width="50%">
 									<a href="#navi" class="viHeaderButton" data-role="button" data-icon="grid" data-theme="c" data-iconpos="notext">Navi</a>
@@ -310,17 +310,7 @@
 							</tr>
 						</table>
 					<td class="viHeaderRight">
-						<div>
-							<a data-inline="true" data-role="button" data-icon="gear" data-theme="c" data-iconpos="notext" class="viHeaderButton" id="viOptionsButton4" onclick="show_OptionsFlyout()">Settings</a>
-							<div class="viOptionsFlyout" id="viOptionsFlyout4">
-								<div class="viOptionsFlyoutInner">
-									<ul data-role="listview" data-inset="true" class="viOptionsFlyoutChoiceGroup" data-filter="false">
-										<li><a href="#help" data-transition="fade" onclick="hide_OptionsFlyout()">Help</a></li>
-										<li><a href="#user_information" data-transition="fade" onclick="hide_OptionsFlyout()">Settings</a></li>
-									</ul>
-								</div>
-							</div>
-						</div>
+						
 					</td>
 				</tr>
 			</tbody>
@@ -363,7 +353,9 @@
 							</tr>
 						</table>
 					<td class="viHeaderRight">
-						
+						<div>
+							<a href="#locationQuery" class="viHeaderButton" data-role="button" data-icon="search" data-theme="c" data-inline="true" data-mini="true" data-iconpos="right" onclick="populateLocationQuery()">Region</a>
+						</div>
 					</td>
 				</tr>
 			</tbody>
@@ -382,6 +374,28 @@
 	
 <!--  --------------------------------------------------------------------------------------------------- -->
 	
+	<div data-role="dialog" id="locationQuery" >
+		<div data-role="header" style="overflow: visible;">
+			<table style="overflow: visible;">
+				<tr>
+					<td width="10%"> </td>
+					<td>
+						<img src="img/ic_launcher.png" />
+					</td>
+					<td><h1>Vizoom</h1></td>
+				</tr>
+			</table>
+		</div>
+		<div data-role="content">
+			<label for="select-location-region" class="select">Select Region:</label>
+			<select name="select-location-region" id="select-location-region">
+			</select>
+			<a href="" data-rel="back" onclick="locationQueryUpdateSearch()" data-role="button" data-icon="check" data-iconpos="right">Update List</a>
+		</div>
+	</div> 
+	
+<!-- ------------------------------------------------------------------------------------------------------- -->
+
 	<div data-role="page" id="myevents" data-title="Vizoom" class="viPage">
 		<div data-role="header" style="overflow: visible;">
 			<table class="viHeader">

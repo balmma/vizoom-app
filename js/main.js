@@ -6,6 +6,7 @@
 var ROOT = 'http://vizoom.smss.ch'; // root url
 var events = new Array(); // a list of all events
 var locations = new Array(); // a list of all locations
+var regions  = new Array(); // a list of all regions
 var credentials; // the credentials, encoded
 var user; // user info
 var qrcode; // the current qrcode of an event
@@ -213,19 +214,22 @@ function display_my_events(list_name) {
 }
 
 // helper function to fill and display the locations list 
-function display_locations(list_name) {
+function display_locations(list_name, myregion) {
 	var list = $("#"+list_name), s = "", i, event;
 	for (i = 0; i < locations.length; i++) {
-		s += "<li><a href=\"#location_detail\" data-transition=\"fade\" onclick=\"display_location_detail('" + locations[i].href + "')\"><img src=\"" + ROOT + locations[i].logo.src + "\"width=\"70px\"><h3>" + locations[i].name + "</h3><p id=\"" + locations[i].id + "\"></p></a></li>";
-		$.ajax({
-			url: ROOT + locations[i].href,
-			dataType: 'json',
-			headers: {'Authorization': 'Basic ' + credentials},
-			success: function(res){
-				var element = $("#" + res.id)[0];
-				element.innerHTML = res.street + ", " + res.city;
-			}
-		});
+		addRegion(locations[i].region);
+		if(myregion.length==0 || myregion == locations[i].region){
+			s += "<li><a href=\"#location_detail\" data-transition=\"fade\" onclick=\"display_location_detail('" + locations[i].href + "')\"><img src=\"" + ROOT + locations[i].logo.src + "\"width=\"70px\"><h3>" + locations[i].name + "</h3><p id=\"" + locations[i].id + "\"></p></a></li>";
+			$.ajax({
+				url: ROOT + locations[i].href,
+				dataType: 'json',
+				headers: {'Authorization': 'Basic ' + credentials},
+				success: function(res){
+					var element = $("#" + res.id)[0];
+					element.innerHTML = res.street + ", " + res.city;
+				}
+			});
+		}
 	}
 	list[0].innerHTML = s;
 	list.listview('refresh');
@@ -243,7 +247,7 @@ function show_my_events() {
 
 // helper function to load the location list. 
 function show_locations() {
-	update_locations({onSuccess: function(){display_locations("locationlist");}});
+	update_locations({onSuccess: function(){display_locations("locationlist", "");}});
 }
 
 // helper function to load the upcoming events. 
@@ -676,4 +680,27 @@ function changeTelPlaceholder(selectField){
 			$('#update_tel')[0].placeholder = '+39';
 			$('#tel')[0].placeholder = '+39'; break;
 	}
+}
+
+function addRegion(region){
+	var found = false;
+	for (var i = 0; i < regions.length; i++) {
+		if(regions[i]==region){found=true;}
+	};
+	if(!found){
+		regions[i] = region;
+	}
+}
+
+function populateLocationQuery() {
+	var s = "";
+	for (var i = 0; i < regions.length; i++) {
+		s += '<option value="'+regions[i]+'">'+regions[i]+'</option>';
+	};
+	$("#select-location-region")[0].innerHTML = s;
+	$('#select-location-region').selectmenu('enable');	
+	$("#select-location-region").selectmenu('refresh');
+}
+function locationQueryUpdateSearch(){
+	display_locations("locationlist", $("#select-location-region").val());
 }
