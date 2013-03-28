@@ -120,3 +120,14 @@
 	width: 100%;
 }
 
+.transition-padding-left {
+	transition: padding-left 0.5s;
+	-webkit-transition: padding-left 0.5s;
+	-moz-transition: padding-left 0.5s;
+	-o-transition: padding-left 0.5s;
+}
+
+.menu-sidebar {
+	padding-top: 57px;
+	background: #222;
+}

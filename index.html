@@ -52,7 +52,7 @@
 	</div> 
 
 <!-- ------------------------------------------------------------------------------------------------------- -->
-	<div data-role="page" id="home" class="viPage">
+	<div data-role="page" id="home" class="viPage" class="transition-padding-left">
 		<div data-id="vizoom-header" data-role="header" data-position="fixed" >
 			<table class="viHeader">
 			<tbody>
@@ -89,7 +89,7 @@
 	
 <!--  --------------------------------------------------------------------------------------------------- -->
 
-	<div data-role="dialog" id="navi" style="height: 100%">
+	<div data-role="dialog" id="navi" style="height: 100%" class="transition-padding-left">
 		<div data-role="header" data-position="fixed" style="overflow: visible;">
 			<table style="overflow: visible;">
 				<tr>
@@ -115,9 +115,25 @@
 	
 <!--  --------------------------------------------------------------------------------------------------- -->
 
-	<div data-role="dialog" id="myCode" style="height: 100%">
+	<div data-role="page" id="menu" class="menu-sidebar transition-padding-left">
+        <br/>
+        <div data-role="content">
+            <ul data-role="listview" data-theme="a" data-filter="false">
+                <li><a href="#news" id="menu-news-button" class="menubtn" data-transition="fade">News</a></li>
+				<li><a href="#events" id="menu-events-button" class="menubtn" data-transition="fade">Events</a></li>
+				<li><a href="#location" id="menu-locations-button" class="menubtn" data-transition="fade">Locations</a></li>
+				<li><a href="#myevents" id="menu-myevents-button" class="menubtn" data-transition="fade">MyEvents</a></li>
+				<li data-icon="gear"><a href="#user_information" id="menu-userinfo-button" class="menubtn" data-transition="fade">Settings</a></li>
+				<li data-icon="info"><a href="#help" id="menu-info-button" class="menubtn" data-transition="fade">Help</a></li>
+            </ul>
+        </div>
+    </div>
+
+<!--  --------------------------------------------------------------------------------------------------- -->
+
+	<div data-role="dialog" id="myCode" style="height: 100%" class="transition-padding-left">
 		<div data-role="header" style="overflow: visible;">
-			<table style="overflow: visible;">
+			<table style="overflow: visible;"> 
 				<tr>
 					<td width="10%"> </td>
 					<td>
@@ -134,13 +150,13 @@
 	
 <!--  --------------------------------------------------------------------------------------------------- -->
 
-	<div data-role="page" id="news" data-title="Vizoom" class="viPage">
+	<div data-role="page" id="news" data-title="Vizoom" class="viPage transition-padding-left">
 		<div data-id="vizoom-header" data-role="header" data-position="fixed">
 			<table class="viHeader">
 			<tbody>
 				<tr>
 					<td class="viHeaderLeft">
-						<a href="#navi" class="viHeaderButton" data-role="button" data-icon="grid" data-theme="c" data-inline="true" data-mini="true" data-iconpos="left">Navi</a>
+						<a href="#" class="viHeaderButton showMenu" data-role="button" data-icon="grid" data-theme="c" data-inline="true" data-mini="true" data-iconpos="left">Navi</a>
 					</td>
 					<td class="viHeaderCenter">
 						<table width="100%">
@@ -176,13 +192,13 @@
 	
 <!--  --------------------------------------------------------------------------------------------------- -->
 	
-	<div data-role="page" id="events" data-title="Vizoom" class="viPage">
+	<div data-role="page" id="events" data-title="Vizoom" class="viPage transition-padding-left">
 		<div data-id="vizoom-header" data-role="header" data-position="fixed">
 			<table class="viHeader">
 			<tbody>
 				<tr>
 					<td class="viHeaderLeft">
-						<a href="#navi" class="viHeaderButton" data-role="button" data-icon="grid" data-theme="c" data-inline="true" data-mini="true" data-iconpos="left">Navi</a>
+						<a href="#" class="viHeaderButton showMenu" data-role="button" data-icon="grid" data-theme="c" data-inline="true" data-mini="true" data-iconpos="left">Navi</a>
 					</td>
 					<td class="viHeaderCenter">
 						<table width="100%">
@@ -215,7 +231,7 @@
 	
 <!--  --------------------------------------------------------------------------------------------------- -->
 
-	<div data-role="page" id="event_detail" data-title="Vizoom" class="viPage">
+	<div data-role="page" id="event_detail" data-title="Vizoom" class="viPage transition-padding-left">
 		<div data-id="vizoom-header" data-role="header" style="overflow: visible;" data-position="fixed">
 			<table class="viHeader">
 			<tbody>
@@ -224,10 +240,10 @@
 						<table width="100%">
 							<tr>
 								<td width="50%">
-									<a href="#events" class="viHeaderButton" data-rel="back" data-role="button" data-iconpos="notext" data-theme="c" data-icon="arrow-l" data-transition="fade">Back</a>
+									<a href="#events" class="viHeaderButton" data-rel="back" data-role="button" data-iconpos="left" data-theme="c" data-mini="true" data-icon="arrow-l" data-transition="fade">Back</a>
 								</td>
 								<td width="50%">
-									<a href="#navi" class="viHeaderButton" data-role="button" data-icon="grid" data-theme="c" data-iconpos="notext">Navi</a>
+									<a href="#" class="viHeaderButton showMenu" data-role="button" data-icon="grid" data-theme="c" data-iconpos="notext">Navi</a>
 								</td>
 							</tr>
 						</table>
@@ -281,7 +297,7 @@
 <!--  --------------------------------------------------------------------------------------------------- -->
 
 
-	<div data-role="page" id="location_detail" data-title="Vizoom" class="viPage">
+	<div data-role="page" id="location_detail" data-title="Vizoom" class="viPage transition-padding-left">
 		<div data-id="vizoom-header" data-role="header" style="overflow: visible;" data-position="fixed">
 			<table class="viHeader">
 			<tbody>
@@ -293,7 +309,7 @@
 									<a href="#location" class="viHeaderButton" data-rel="back" data-role="button" data-iconpos="left" data-theme="c" data-icon="arrow-l" data-mini="true" data-inline="true" data-transition="fade">Back</a>
 								</td>
 								<td width="50%">
-									<a href="#navi" class="viHeaderButton" data-role="button" data-icon="grid" data-theme="c" data-iconpos="notext">Navi</a>
+									<a href="#" class="viHeaderButton showMenu" data-role="button" data-icon="grid" data-theme="c" data-iconpos="notext">Navi</a>
 								</td>
 							</tr>
 						</table>
@@ -333,13 +349,13 @@
 	
 <!--  --------------------------------------------------------------------------------------------------- -->
 	
-	<div data-role="page" id="location" data-title="Vizoom" class="viPage">
+	<div data-role="page" id="location" data-title="Vizoom" class="viPage transition-padding-left">
 		<div data-id="vizoom-header" data-role="header" style="overflow: visible;" data-position="fixed">
 			<table class="viHeader">
 			<tbody>
 				<tr>
 					<td class="viHeaderLeft">
-						<a href="#navi" class="viHeaderButton" data-role="button" data-icon="grid" data-theme="c" data-inline="true" data-mini="true" data-iconpos="left">Navi</a>
+						<a href="#" class="viHeaderButton showMenu" data-role="button" data-icon="grid" data-theme="c" data-inline="true" data-mini="true" data-iconpos="left">Navi</a>
 					</td>
 					<td class="viHeaderCenter">
 						<table width="100%">
@@ -374,7 +390,7 @@
 	
 <!--  --------------------------------------------------------------------------------------------------- -->
 	
-	<div data-role="dialog" id="locationQuery" >
+	<div data-role="dialog" id="locationQuery" class="transition-padding-left">
 		<div data-role="header" style="overflow: visible;">
 			<table style="overflow: visible;">
 				<tr>
@@ -390,19 +406,18 @@
 			<label for="select-location-region" class="select">Select Region:</label>
 			<select name="select-location-region" id="select-location-region">
 			</select>
-			<a href="" data-rel="back" onclick="locationQueryUpdateSearch()" data-role="button" data-icon="check" data-iconpos="right">Update List</a>
 		</div>
 	</div> 
 	
 <!-- ------------------------------------------------------------------------------------------------------- -->
 
-	<div data-role="page" id="myevents" data-title="Vizoom" class="viPage">
+	<div data-role="page" id="myevents" data-title="Vizoom" class="viPage transition-padding-left">
 		<div data-id="vizoom-header" data-role="header" style="overflow: visible;" data-position="fixed">
 			<table class="viHeader">
 			<tbody>
 				<tr>
 					<td class="viHeaderLeft">
-						<a href="#navi" class="viHeaderButton" data-role="button" data-icon="grid" data-theme="c" data-inline="true" data-mini="true" data-iconpos="left">Navi</a>
+						<a href="#" class="viHeaderButton showMenu" data-role="button" data-icon="grid" data-theme="c" data-inline="true" data-mini="true" data-iconpos="left">Navi</a>
 					</td>
 					<td class="viHeaderCenter">
 						<table width="100%">
@@ -437,7 +452,7 @@
 	
 <!--  --------------------------------------------------------------------------------------------------- -->
 
-	<div data-role="dialog" id="help" style="height: 100%">
+	<div data-role="dialog" id="help" style="height: 100%" class="transition-padding-left">
 		<div data-role="header" style="overflow: visible;">
 			<table style="overflow: visible;">
 				<tr>
@@ -468,7 +483,7 @@
 	
 <!-- ------------------------------------------------------------------------------------------------------- -->
 
-<div data-role="dialog" id="settings" style="height: 100%">
+<div data-role="dialog" id="settings" style="height: 100%" class="transition-padding-left">
 		<div data-role="header" style="overflow: visible;">
 			<table style="overflow: visible;">
 				<tr>
@@ -502,7 +517,7 @@
 
 <!-- ------------------------------------------------------------------------------------------------------- -->
 
-	<div data-role="dialog" id="user_information" style="height: 100%">
+	<div data-role="dialog" id="user_information" style="height: 100%" class="transition-padding-left">
 		<div data-role="header" style="overflow: visible;">
 			<table style="overflow: visible;">
 				<tr>
@@ -525,7 +540,7 @@
 	
 <!-- ------------------------------------------------------------------------------------------------------- -->
 
-	<div data-role="dialog" id="user_password" style="height: 100%">
+	<div data-role="dialog" id="user_password" style="height: 100%" class="transition-padding-left">
 		<div data-role="header" style="overflow: visible;">
 			<table style="overflow: visible;">
 				<tr>
@@ -557,7 +572,7 @@
 
 <!-- ------------------------------------------------------------------------------------------------------- -->
 
-	<div data-role="dialog" id="agb" style="height: 100%">
+	<div data-role="dialog" id="agb" style="height: 100%" class="transition-padding-left">
 		<div data-role="header" style="overflow: visible;">
 			<table style="overflow: visible;">
 				<tr>
@@ -626,7 +641,7 @@
 
 <!-- ------------------------------------------------------------------------------------------------------- -->
 
-	<div data-role="dialog" id="register" style="height: 100%">
+	<div data-role="dialog" id="register" style="height: 100%" class="transition-padding-left">
 		<div data-role="header" style="overflow: visible;">
 			<table style="overflow: visible;">
 				<tr>
@@ -708,7 +723,7 @@
 	
 	<!-- ------------------------------------------------------------------------------------------------------- -->
 
-	<div data-role="dialog" id="user-info" style="height: 100%">
+	<div data-role="dialog" id="user-info" style="height: 100%" class="transition-padding-left">
 		<div data-role="header" style="overflow: visible;">
 			<table style="overflow: visible;">
 				<tr>

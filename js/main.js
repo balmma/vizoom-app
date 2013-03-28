@@ -7,9 +7,11 @@ var ROOT = 'http://vizoom.smss.ch'; // root url
 var events = new Array(); // a list of all events
 var locations = new Array(); // a list of all locations
 var regions  = new Array(); // a list of all regions
+var selectedRegion = "none";
 var credentials; // the credentials, encoded
 var user; // user info
 var qrcode; // the current qrcode of an event
+var UpdateEventsViaScroll = false; // define if we update the list of events when scrolling to the bottom of the page
 
 var fixgeometry = function() {  
   scroll(0, 0);  
@@ -49,6 +51,10 @@ $(document).ready(function() {
 	$("input[type=password]").click(function() { // to select the current content if onclick happens
 	   $(this).select();
 	});
+	$("#select-location-region").change(function() {
+        locationQueryUpdateSearch();
+        $.mobile.changePage('#location', 'fade', true, true);
+    });
 	
 	// try to load credentials from file and autologin
 	if(typeof(Storage)!=="undefined")
@@ -65,8 +71,24 @@ $(document).ready(function() {
     	remove_login_close_button();
 	}
 	
-	// load credentials with phonegap
-	//window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, gotFS, fail);
+	// side navi bar
+	$(document).on("swiperight", function(e){
+		if(!menuStatus){
+			showMenu();
+		}
+	});
+	  
+	$(document).on("swipeleft", function(e){
+		if(menuStatus){
+			showMenu();
+		}
+	});
+
+	initializeMenu();
+
+	$(document).on("click", ".showMenu", function(){
+		showMenu();    
+	});
 	
 });
 
@@ -142,45 +164,53 @@ function update_login_status() {
 }
 
 // helper function to fill and display the events list 
-function display_events(list_name, nr_of_items) {
-	var list = $("#"+list_name), s = "", i, event;
+function display_events(list_name, start, nr_of_items) {
+	var list = $("#"+list_name), s = "", i;
 	if(events.length==0){
-		(nr_of_items==0) ? show_events() : load_upcoming_events();
+		(nr_of_items==5) ? load_upcoming_events() : show_events();
 		return;
 	}
-	if(nr_of_items==0 || nr_of_items>events.length)
+	if(nr_of_items==0 || (start+nr_of_items)>events.length)
 		nr_of_items = events.length;
 	var last_date;
-	for (i = 0; i < nr_of_items; i++) {
+	for (i = start; i < nr_of_items; i++) {
 		if(last_date=="undefined" || moment(events[i].start_time).format("DD.MM.YYYY")!=last_date){
 			s+="<li data-role=\"list-divider\">"+moment(events[i].start_time).format("dd, DD.MM.YYYY")+"</li>";
 			last_date = moment(events[i].start_time).format("DD.MM.YYYY")
 		}
-		s += "<li><a href=\"#event_detail\" data-transition=\"fade\" onclick=\"display_event_detail('" + events[i].href + "')\"><img id=\"" + list_name + events[i].id + "\" width=\"70px\"><h3>" + events[i].name + "</h3><p>" + events[i].location.name + ", Start: " + moment(events[i].start_time).format("HH:mm") + "</p></a></li>";
-		$.ajax({
-			url: ROOT + events[i].href,
-			dataType: 'json',
-			headers: {'Authorization': 'Basic ' + credentials},
-			success: function(res){
-				var img;
-				if($("#eventlist" + res.id).length != 0){
-					img = $("#eventlist" + res.id)[0];
-					img.setAttribute("src", ROOT + res.images[0].thumbnail.src);
-				}
-				if($("#upcoming_eventlist" + res.id).length != 0){
-					img = $("#upcoming_eventlist" + res.id)[0];
-					img.setAttribute("src", ROOT + res.images[0].thumbnail.src);
-				}
-			}
-		});
+		s += "<li>"+
+				"<a href=\"#event_detail\" data-transition=\"fade\" onclick=\"display_event_detail('" + events[i].href + "')\">"+
+					"<img id=\"" + list_name + events[i].id + "\" src=\""+ROOT+events[i].images[0].thumbnail.src+"\" width=\"70px\">"+
+					"<h3>" + events[i].name + "</h3>"+
+					"<p>" + events[i].location.name + ", Start: " + moment(events[i].start_time).format("HH:mm") + "</p>"+
+				"</a>"+
+			 "</li>";
 	}
 	list[0].innerHTML = s;
 	list.listview('refresh');
+	if(nr_of_items == events.length)
+		UpdateEventsViaScroll = false;
+	else
+		UpdateEventsViaScroll = true;
 }
+
+$(window).scroll(function () { 
+	if(UpdateEventsViaScroll && $.mobile.activePage.attr('id')=="events"){
+	    var height = $(window).height();
+	    var scrollTop = $(window).scrollTop();
+	    var scrollHeight = $("#events")[0].scrollHeight;
+
+	    if (scrollTop >= scrollHeight - height - 20) { 
+	    	var numberOfItemsInList = $("#events li").size() -$("#events li[data-role='list-divider']").size()
+	    	UpdateEventsViaScroll = false;
+	    	display_events("eventlist", numberOfItemsInList, 20);
+	    }
+    }
+});
 
 // helper function to fill and display the my events list 
 function display_my_events(list_name) {
-	var list = $("#"+list_name), s = "", i, event, count=0;
+	var list = $("#"+list_name), s = "", i, count=0;
 	var last_date;
 	for (i = 0; i < events.length; i++) {
 		if(events[i].participation_status == "confirmed_as_friend" ){
@@ -189,19 +219,13 @@ function display_my_events(list_name) {
 				s+="<li data-role=\"list-divider\">"+moment(events[i].start_time).format("dd, DD.MM.YYYY")+"</li>";
 				last_date = moment(events[i].start_time).format("DD.MM.YYYY")
 			}
-			s += "<li><a href=\"#event_detail\" data-transition=\"fade\" onclick=\"display_event_detail('" + events[i].href + "')\"><img id=\"" + list_name + events[i].id + "\" width=\"70px\"><h3>" + events[i].name + "</h3><p>" + events[i].location.name + ", Start: " + moment(events[i].start_time).format("HH:mm") + "</p></a></li>";
-			$.ajax({
-				url: ROOT + events[i].href,
-				dataType: 'json',
-				headers: {'Authorization': 'Basic ' + credentials},
-				success: function(res){
-					var img;
-					if($("#participating_eventlist" + res.id).length != 0){
-						img = $("#participating_eventlist" + res.id)[0];
-						img.setAttribute("src", ROOT + res.images[0].thumbnail.src);
-					}
-				}
-			});
+			s += "<li>"+
+					"<a href=\"#event_detail\" data-transition=\"fade\" onclick=\"display_event_detail('" + events[i].href + "')\">"+
+						"<img src=\""+ROOT+events[i].images[0].thumbnail.src+"\" width=\"70px\">"+
+						"<h3>" + events[i].name + "</h3>"+
+						"<p>" + events[i].location.name + ", Start: " + moment(events[i].start_time).format("HH:mm") + "</p>"+
+					"</a>"+
+				 "</li>";
 		}
 	}
 	list[0].innerHTML = s;
@@ -215,20 +239,17 @@ function display_my_events(list_name) {
 
 // helper function to fill and display the locations list 
 function display_locations(list_name, myregion) {
-	var list = $("#"+list_name), s = "", i, event;
+	var list = $("#"+list_name), s = "", i;
 	for (i = 0; i < locations.length; i++) {
 		addRegion(locations[i].region);
-		if(myregion.length==0 || myregion == locations[i].region){
-			s += "<li><a href=\"#location_detail\" data-transition=\"fade\" onclick=\"display_location_detail('" + locations[i].href + "')\"><img src=\"" + ROOT + locations[i].logo.src + "\"width=\"70px\"><h3>" + locations[i].name + "</h3><p id=\"" + locations[i].id + "\"></p></a></li>";
-			$.ajax({
-				url: ROOT + locations[i].href,
-				dataType: 'json',
-				headers: {'Authorization': 'Basic ' + credentials},
-				success: function(res){
-					var element = $("#" + res.id)[0];
-					element.innerHTML = res.street + ", " + res.city;
-				}
-			});
+		if(myregion=="none" || myregion == locations[i].region){
+			s += "<li>"+
+					"<a href=\"#location_detail\" data-transition=\"fade\" onclick=\"display_location_detail('" + locations[i].href + "')\">"+
+						"<img src=\"" + ROOT + locations[i].logo.src + "\"width=\"70px\">"+
+						"<h3>" + locations[i].name + "</h3>"+
+						"<p>"+locations[i].street+", "+locations[i].city+"</p>"+
+					"</a>"+
+				 "</li>";
 		}
 	}
 	list[0].innerHTML = s;
@@ -237,7 +258,7 @@ function display_locations(list_name, myregion) {
 
 // helper function to load the events. 
 function show_events() {
-	update_events({onSuccess: function(){display_events("eventlist", 0);}});
+	update_events({onSuccess: function(){display_events("eventlist", 0, 20);}});
 }
 
 // helper function to load all my events. 
@@ -247,12 +268,12 @@ function show_my_events() {
 
 // helper function to load the location list. 
 function show_locations() {
-	update_locations({onSuccess: function(){display_locations("locationlist", "");}});
+	update_locations({onSuccess: function(){display_locations("locationlist", "none");}});
 }
 
 // helper function to load the upcoming events. 
 function load_upcoming_events() { 
-	update_events({onSuccess: function(){display_events("upcoming_eventlist", 5);}});
+	update_events({onSuccess: function(){display_events("upcoming_eventlist", 0, 5);}});
 }
 
 // loads the qr code image
@@ -693,14 +714,56 @@ function addRegion(region){
 }
 
 function populateLocationQuery() {
-	var s = "";
+	var s = '<option value="none">None</option>';
 	for (var i = 0; i < regions.length; i++) {
 		s += '<option value="'+regions[i]+'">'+regions[i]+'</option>';
 	};
 	$("#select-location-region")[0].innerHTML = s;
-	$('#select-location-region').selectmenu('enable');	
-	$("#select-location-region").selectmenu('refresh');
+	$('#select-location-region option[value='+selectedRegion+']').attr('selected', 'selected');
+	$("#select-location-region").selectmenu('refresh', true);
 }
 function locationQueryUpdateSearch(){
-	display_locations("locationlist", $("#select-location-region").val());
+	selectedRegion = $("#select-location-region").val()
+	display_locations("locationlist", selectedRegion);
 }
+
+
+
+
+/// Side navi bar
+var percent = '.66';    
+var menuStatus = false;
+var margin = $(window).width() * percent;
+var weight = $(window).height();
+
+function initializeMenu(){
+	$("#menu-news-button").click(function(e){showMenu();load_upcoming_events();});
+	$("#menu-events-button").click(function(e){showMenu();show_events();});
+	$("#menu-locations-button").click(function(e){showMenu();show_locations();});
+	$("#menu-myevents-button").click(function(e){showMenu();show_my_events();});
+	$("#menu-userinfo-button").click(function(e){showMenu();});
+	$("#menu-info-button").click(function(e){showMenu();});
+	$("#menu").css({
+		'z-index': '-100',
+		width: margin,
+		height: weight
+	}).page().hide();
+	menuStatus = false;
+}
+
+function showMenu(){
+	if(!menuStatus){
+		$.mobile.activePage.css("padding-left", margin);
+		setTimeout(function(){
+			$("#menu").css({'z-index': '100'});
+			$("#menu").show();
+		},500);
+		menuStatus = true;
+	} else {
+		$("#menu").css({'z-index': '-100'});
+		$("#menu").hide();
+		$.mobile.activePage.css("padding-left", 0);
+		menuStatus = false;
+	}
+}
+  
